@@ -27,6 +27,7 @@ MusicPlayer::MusicPlayer(QWidget *parent)
   
     
      
+
     
 }
 
