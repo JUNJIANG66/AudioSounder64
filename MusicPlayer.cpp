@@ -55,6 +55,16 @@ void MusicPlayer::intiwidget()
     findSign->setIcon(findIcon.pixmap(QSize(16,16)));
     findSign->setEnabled(false);
     ui.musicFind->addAction(findSign, QLineEdit::LeadingPosition);
+    ui.currentTime->setStyleSheet(R"(
+                    background-color:black;
+                    border-radius:4px;
+                    padding:2px 6px;
+                                  )");
+    ui.sumTime->setStyleSheet(R"(
+                    background-color:black;
+                    border-radius:4px;
+                    padding:2px 6px;
+                                  )");
     
     //初始化按钮
     setButtonStyle(ui.mode, ":/icon/icon/sequence.png", QSize(50, 50));
@@ -171,8 +181,15 @@ void MusicPlayer::intiwidget()
     }
         });
     connect(ui.mode, &QPushButton::clicked, this, &MusicPlayer::changeMode);
+
+
+    ui.currentTime->setText("00:00");
+    connect(m_player, &QMediaPlayer::durationChanged, this, &MusicPlayer::intisilder);
     connect(m_player, &QMediaPlayer::positionChanged, this, &MusicPlayer::updateSlider);
     connect(ui.musicSlider, &QSlider::sliderReleased, this, &MusicPlayer::rollSlider);
+    connect(ui.musicSlider, &QSlider::valueChanged, this, &MusicPlayer::setCurrentTime);
+
+
     ui.musicFind->setClearButtonEnabled(1);
     connect(ui.musicFind, &QLineEdit::textChanged, this, &MusicPlayer::findManager);
 }
@@ -249,15 +266,27 @@ void MusicPlayer::musicManager(const QString& filepath)
 
 void MusicPlayer::intisilder()
 {  
-    ui.musicSlider->setRange(0, m_player->duration());
+    int sum = m_player->duration();
+    QString sumtime = QTime(0, sum / 1000 / 60, sum / 1000 % 60, 0).toString("mm:ss");
+    ui.sumTime->setText(sumtime);
+    ui.musicSlider->setRange(0, sum);
+
+
+
+    
 }
 
 void MusicPlayer::updateSlider()
 {
-    intisilder();
-    if(!ui.musicSlider->isSliderDown())
-    ui.musicSlider->setValue(m_player->position());
-
+    
+    int cur = m_player->position();
+    if (!ui.musicSlider->isSliderDown())
+    {
+        ui.musicSlider->setValue(cur);
+        QString curtime = QTime(0, cur / 1000 / 60, cur / 1000 % 60, 0).toString("mm:ss");
+        ui.currentTime->setText(curtime);
+    }
+ 
 }
 
 void MusicPlayer::rollSlider()
@@ -265,7 +294,14 @@ void MusicPlayer::rollSlider()
     m_player->setPosition(ui.musicSlider->value());
     m_player->play();
     setButtonStyle(ui.ifpause, ":/icon/icon/pause.png", QSize(60, 60));
+    
+}
 
+void MusicPlayer::setCurrentTime()
+{
+    int cur = ui.musicSlider->value();
+    QString curtime = QTime(0, cur / 1000 / 60, cur / 1000 % 60, 0).toString("mm:ss");
+    ui.currentTime->setText(curtime);
 }
 
 void MusicPlayer::intimusicList(const QString& filepath)
@@ -311,6 +347,7 @@ void MusicPlayer::intimusicList(const QString& filepath)
         currentMusic = musicpath.toString();
         musicMaxId = ui.musiclist->count()-1;
         currectPath = filepath;
+        m_player->setSource(QUrl::fromLocalFile(currentMusic));
     }
 
 }
