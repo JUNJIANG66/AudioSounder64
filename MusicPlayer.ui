@@ -61,16 +61,6 @@
      </item>
     </layout>
    </widget>
-   <widget class="QListWidget" name="musiclist">
-    <property name="geometry">
-     <rect>
-      <x>670</x>
-      <y>-10</y>
-      <width>291</width>
-      <height>751</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QWidget" name="horizontalLayoutWidget_2">
     <property name="geometry">
      <rect>
@@ -87,6 +77,31 @@
         <enum>Qt::Orientation::Horizontal</enum>
        </property>
       </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLineEdit" name="musicFind">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>0</y>
+      <width>291</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>29</y>
+      <width>291</width>
+      <height>711</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QListWidget" name="musiclist"/>
      </item>
     </layout>
    </widget>
@@ -123,6 +138,8 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="Resource/ICON/iconResource.qrc"/>
+ </resources>
  <connections/>
 </ui>

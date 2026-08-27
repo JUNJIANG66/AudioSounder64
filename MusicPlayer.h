@@ -30,6 +30,7 @@ private:
     void musicManager(const QString& filepath);//音乐播放按钮管理
     
 
+    QFileInfoList fileInfos;//音乐文件信息列表
     void intimusicList(const QString& filepath);//播放列表初始化
     void musicListManager();//播放列表按钮管理
     void clickListItem();//列表项切换播放
@@ -61,6 +62,9 @@ private:
     QString currectPath="nothing";//当前文件夹路径
     void sustainDefaultPath();//存储为默认路径
     QString getDefaultPath();//获取默认路径
+
+
+    void findManager();
 
     
     

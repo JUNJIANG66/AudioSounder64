@@ -9,5 +9,6 @@
         <file>icon/sequence.png</file>
         <file>icon/singleLoop.png</file>
         <file>icon/playlist.png</file>
+        <file>icon/find.png</file>
     </qresource>
 </RCC>

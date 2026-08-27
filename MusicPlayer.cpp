@@ -11,6 +11,8 @@
 #include <QRandomGenerator>
 #include <QFileDialog>
 #include <QSettings>
+#include<QAction>
+#include<QLineEdit>
 MusicPlayer::MusicPlayer(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -44,16 +46,23 @@ void MusicPlayer::setButtonStyle(QPushButton * btn, const QString & filepath,con
 
 void MusicPlayer::intiwidget()
 {
-    
+    //初始化样式
     ui.menuBar->setNativeMenuBar(false); //必须关闭原生菜单栏，样式才生效
     ui.menuBar->setStyleSheet("QMenuBar{ background-color:black; color:white; }");
-
+    ui.musicFind->setStyleSheet("background-color:black;  border:1px solid #ccc;");
+    QAction* findSign = new QAction(ui.musicFind);
+    QIcon findIcon(":/icon/icon/find.png");
+    findSign->setIcon(findIcon.pixmap(QSize(16,16)));
+    findSign->setEnabled(false);
+    ui.musicFind->addAction(findSign, QLineEdit::LeadingPosition);
+    
+    //初始化按钮
     setButtonStyle(ui.mode, ":/icon/icon/sequence.png", QSize(50, 50));
     setButtonStyle(ui.previous, ":/icon/icon/previous.png", QSize(50, 50));
     setButtonStyle(ui.ifpause, ":/icon/icon/player.png", QSize(60, 60));
     setButtonStyle(ui.next, ":/icon/icon/next.png", QSize(50, 50));
     setButtonStyle(ui.playlist, ":/icon/icon/playlist.png", QSize(50, 50));
-
+    //初始化控件功能
     intimedia();
     intimusicList(getDefaultPath());
     
@@ -65,6 +74,7 @@ void MusicPlayer::intiwidget()
         });
 
     ui.musiclist->hide();
+    ui.musicFind->hide();
     connect(ui.playlist, &QPushButton::clicked, this, [&]()
         {
             musicListManager();
@@ -82,6 +92,11 @@ void MusicPlayer::intiwidget()
             case sequence:preplay(); break;
             case random:
             {
+                if (currectPath == "nothing")
+                {
+                    QMessageBox::warning(this, "提示", "请选择音频文件夹");
+                    return;
+                }
                 if (currentMusic == "nothing")
                 {
                     QMessageBox::warning(this, "提示", "当前文件夹没有可以播放的音乐");
@@ -97,6 +112,11 @@ void MusicPlayer::intiwidget()
                 break;
             }
             case singleLoop:
+                if (currectPath == "nothing")
+                {
+                    QMessageBox::warning(this, "提示", "请选择音频文件夹");
+                    return;
+                }
                 if (currentMusic == "nothing")
                 {
                     QMessageBox::warning(this, "提示", "当前文件夹没有可以播放的音乐");
@@ -115,6 +135,11 @@ void MusicPlayer::intiwidget()
             case sequence:nextplay(); break;
             case random:
             {
+                if (currectPath == "nothing")
+                {
+                    QMessageBox::warning(this, "提示", "请选择音频文件夹");
+                    return;
+                }
                 if (currentMusic == "nothing")
                 {
                     QMessageBox::warning(this, "提示", "当前文件夹没有可以播放的音乐");
@@ -130,6 +155,11 @@ void MusicPlayer::intiwidget()
                 break;
             }
             case singleLoop:
+                if (currectPath == "nothing")
+                {
+                    QMessageBox::warning(this, "提示", "请选择音频文件夹");
+                    return;
+                }
                 if (currentMusic == "nothing")
                 {
                     QMessageBox::warning(this, "提示", "当前文件夹没有可以播放的音乐");
@@ -143,6 +173,8 @@ void MusicPlayer::intiwidget()
     connect(ui.mode, &QPushButton::clicked, this, &MusicPlayer::changeMode);
     connect(m_player, &QMediaPlayer::positionChanged, this, &MusicPlayer::updateSlider);
     connect(ui.musicSlider, &QSlider::sliderReleased, this, &MusicPlayer::rollSlider);
+    ui.musicFind->setClearButtonEnabled(1);
+    connect(ui.musicFind, &QLineEdit::textChanged, this, &MusicPlayer::findManager);
 }
 
 
@@ -182,6 +214,11 @@ void MusicPlayer::intimedia()
 
 void MusicPlayer::musicManager(const QString& filepath)
 {
+    if (currectPath == "nothing")
+    {
+        QMessageBox::warning(this, "提示", "请选择音频文件夹");
+        return;
+    }
     if (filepath == "nothing")
     {
         QMessageBox::warning(this, "提示", "当前文件夹没有可以播放的音乐");
@@ -246,14 +283,16 @@ void MusicPlayer::intimusicList(const QString& filepath)
     dir.setFilter(QDir::Files | QDir::NoDotAndDotDot);//设置文件类型筛选
     if (dir.count() == 0)
     {
+        fileInfos.clear();
         currentMusic = "nothing";
         musicMaxId = 0;
         currentID = 0;
+        currectPath = filepath;
         return;
     }
     else 
     {
-        QFileInfoList fileInfos = dir.entryInfoList();//获取文件信息列表
+         fileInfos = dir.entryInfoList();//获取文件信息列表
 
         for (const QFileInfo& file : fileInfos)//遍历其中的文件信息
         {
@@ -271,6 +310,7 @@ void MusicPlayer::intimusicList(const QString& filepath)
         QVariant musicpath = ui.musiclist->currentItem()->data(Qt::UserRole);
         currentMusic = musicpath.toString();
         musicMaxId = ui.musiclist->count()-1;
+        currectPath = filepath;
     }
 
 }
@@ -281,10 +321,12 @@ void MusicPlayer::musicListManager()
     if (!ui.musiclist->isVisible())
     {
         ui.musiclist->show();
+        ui.musicFind->show();
     }
     else
     {
         ui.musiclist->hide();
+        ui.musicFind->hide();
     }
 
 }
@@ -310,6 +352,11 @@ void MusicPlayer::setMusicPath(const QFileInfo& file, QListWidgetItem* item)
 
 void MusicPlayer::nextplay()
 {
+    if (currectPath == "nothing")
+    {
+        QMessageBox::warning(this, "提示", "请选择音频文件夹");
+        return;
+    }
     if (currentMusic == "nothing")
     {
         QMessageBox::warning(this, "提示", "当前文件夹没有可以播放的音乐");
@@ -331,6 +378,11 @@ void MusicPlayer::nextplay()
 
 void MusicPlayer::preplay()
 {
+    if (currectPath == "nothing")
+    {
+        QMessageBox::warning(this, "提示", "请选择音频文件夹");
+        return;
+    }
     if (currentMusic == "nothing")
     {
         QMessageBox::warning(this, "提示", "当前文件夹没有可以播放的音乐");
@@ -381,8 +433,11 @@ void MusicPlayer::addFiles()
     if (currectPath.isEmpty())
         return;
     intimusicList(currectPath);
-    if(!ui.musiclist->isVisible())
+    if (!ui.musiclist->isVisible())
+    {
         ui.musiclist->show();
+        ui.musicFind->show();
+    }
     m_player->stop();
     m_player->setSource(QUrl());
     setButtonStyle(ui.ifpause, ":/icon/icon/player.png", QSize(60, 60));
@@ -402,6 +457,44 @@ QString MusicPlayer::getDefaultPath()
     QSettings sustain("jjh", "AudioSounder64");
     QVariant path = sustain.value("defaultPath");
     return path.toString();
+}
+
+void MusicPlayer::findManager()
+{
+    if(currectPath=="nothing")
+    {
+        if (!ui.musicFind->text().isEmpty())
+        {
+            QMessageBox::warning(this, "提示", "请选择音频文件夹");
+            ui.musicFind->clear();
+        }
+        return;
+    }
+    if (fileInfos.count() == 0)
+    {
+        if (!ui.musicFind->text().isEmpty())
+        {
+            QMessageBox::warning(this, "提示", "当前文件夹没有可以播放的音乐");
+            ui.musicFind->clear();
+        }
+        return;
+    }
+    for (int i = 0; i <= musicMaxId; i++)
+    {
+        ui.musiclist->item(i)->setHidden(1);
+    }
+    int first = currentID;//优选选中
+    bool dic = 1;
+    for (int i = 0; i <= musicMaxId; i++)
+    {
+        if (ui.musiclist->item(i)->text().contains(ui.musicFind->text(), Qt::CaseInsensitive)|| ui.musicFind->text().isEmpty())
+        {
+            ui.musiclist->item(i)->setHidden(0);
+            if (dic&& !ui.musicFind->text().isEmpty()) { first = i; dic = 0; }
+        }
+    }
+    ui.musiclist->setCurrentRow(first);
+
 }
 
 
