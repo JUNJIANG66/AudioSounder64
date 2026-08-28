@@ -60,6 +60,9 @@ private:
 
     void findManager();
 
+    void intivolumeSlider();
+    void volumeSliderManager();
+
     void intiwidget();//初始化控件
 
     void intimenu();//初始化菜单

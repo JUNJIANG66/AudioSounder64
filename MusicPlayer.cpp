@@ -200,13 +200,17 @@ void MusicPlayer::intiwidget()
     //加载进度条功能
     ui.currentTime->setText("00:00");
     connect(m_player, &QMediaPlayer::durationChanged, this, &MusicPlayer::intisilder);//切换音乐时更新进度条
-    connect(m_player, &QMediaPlayer::positionChanged, this, &MusicPlayer::updateSlider);
-    connect(ui.musicSlider, &QSlider::sliderReleased, this, &MusicPlayer::rollSlider);
-    connect(ui.musicSlider, &QSlider::valueChanged, this, &MusicPlayer::setCurrentTime);
+    connect(m_player, &QMediaPlayer::positionChanged, this, &MusicPlayer::updateSlider);//播放时更新进度条
+    connect(ui.musicSlider, &QSlider::sliderReleased, this, &MusicPlayer::rollSlider);//拖拽时更新播放进度
+    connect(ui.musicSlider, &QSlider::valueChanged, this, &MusicPlayer::setCurrentTime);//拖拽时更新时间
 
-
+    //加载音量功能
+    intivolumeSlider();
+    connect(ui.volumeSlider, &QSlider::valueChanged, this, &MusicPlayer::volumeSliderManager);////拖拽时更新音量
     
     connect(ui.musicFind, &QLineEdit::textChanged, this, &MusicPlayer::findManager);//加载搜索框功能
+
+
 }
 
 
@@ -230,7 +234,6 @@ void MusicPlayer::intimedia()
     {
         m_player = new QMediaPlayer(this);
         a_output = new QAudioOutput(this);
-        a_output->setVolume(0.1);
         m_player->setAudioOutput(a_output);
         connect(m_player, &QMediaPlayer::mediaStatusChanged, this,
             [this](QMediaPlayer::MediaStatus status) {
@@ -547,6 +550,20 @@ void MusicPlayer::findManager()
     }
     ui.musiclist->setCurrentRow(first);
 
+}
+
+
+void MusicPlayer::intivolumeSlider()
+{
+    ui.volumeSlider->setRange(0, 100);
+    ui.volumeSlider->setValue(50);
+    a_output->setVolume(0.5);
+
+}
+
+void MusicPlayer::volumeSliderManager()
+{
+    a_output->setVolume((float)ui.volumeSlider->value()/100);
 }
 
 
