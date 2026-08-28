@@ -49,17 +49,32 @@ void MusicPlayer::intiwidget()
     //初始化样式
     ui.menuBar->setNativeMenuBar(false); //必须关闭原生菜单栏，样式才生效
     ui.menuBar->setStyleSheet("QMenuBar{ background-color:black; color:white; }");
-    ui.musicFind->setStyleSheet("background-color:black;  border:1px solid #ccc;");
-    QAction* findSign = new QAction(ui.musicFind);
+    ui.musicFind->setStyleSheet("background-color:white;color:black;  border:1px solid #ccc;");
+    QAction* findSign = new QAction(ui.musicFind);//设置搜索框图标和清空
     QIcon findIcon(":/icon/icon/find.png");
     findSign->setIcon(findIcon.pixmap(QSize(16,16)));
     findSign->setEnabled(false);
     ui.musicFind->addAction(findSign, QLineEdit::LeadingPosition);
+
+    QAction* clearSign = new QAction(ui.musicFind);
+    QIcon clearIcon(":/icon/icon/clear.png");
+    clearSign->setIcon(clearIcon.pixmap(QSize(16, 16)));
+    ui.musicFind->addAction(clearSign, QLineEdit::TrailingPosition);
+    clearSign->setVisible(0);
+    connect(clearSign, &QAction::triggered, ui.musicFind, &QLineEdit::clear);
+    connect(ui.musicFind, &QLineEdit::textChanged, this,[=]()
+        {
+            if (ui.musicFind->text().isEmpty())
+                clearSign->setVisible(0);
+            else 
+                clearSign->setVisible(1);
+        });
+
     ui.currentTime->setStyleSheet(R"(
                     background-color:black;
                     border-radius:4px;
                     padding:2px 6px;
-                                  )");
+                                  )");//设置时间进度样式
     ui.sumTime->setStyleSheet(R"(
                     background-color:black;
                     border-radius:4px;
@@ -73,23 +88,23 @@ void MusicPlayer::intiwidget()
     setButtonStyle(ui.next, ":/icon/icon/next.png", QSize(50, 50));
     setButtonStyle(ui.playlist, ":/icon/icon/playlist.png", QSize(50, 50));
     //初始化控件功能
-    intimedia();
-    intimusicList(getDefaultPath());
+    intimedia();//初始化媒体
+    intimusicList(getDefaultPath());//列表内容初始化
     
 
     connect(ui.ifpause, &QPushButton::clicked, this, [&]() 
         {
             musicManager(currentMusic);
         
-        });
+        });//加载播放按钮功能
 
     ui.musiclist->hide();
     ui.musicFind->hide();
     connect(ui.playlist, &QPushButton::clicked, this, [&]()
         {
             musicListManager();
-        });
-    connect(ui.musiclist, &QListWidget::itemClicked, this, &MusicPlayer::clickListItem);
+        });//加载显示列表按钮功能
+    connect(ui.musiclist, &QListWidget::itemClicked, this, &MusicPlayer::clickListItem);//加载列表选项播放功能
     connect(ui.musiclist, &QListWidget::itemClicked, this, [&]()
         {
             musicManager(currentMusic);
@@ -136,7 +151,7 @@ void MusicPlayer::intiwidget()
                 musicManager(currentMusic);
                 break;
             }
-        });
+        });//加载播放上下音频按钮功能
     connect(ui.next, &QPushButton::clicked, this, [&]()
 
         {
@@ -180,18 +195,18 @@ void MusicPlayer::intiwidget()
                 break;
     }
         });
-    connect(ui.mode, &QPushButton::clicked, this, &MusicPlayer::changeMode);
+    connect(ui.mode, &QPushButton::clicked, this, &MusicPlayer::changeMode);//加载播放模式切换功能
 
 
-    ui.currentTime->setText("00:00");
+    ui.currentTime->setText("00:00");//加载进度条功能
     connect(m_player, &QMediaPlayer::durationChanged, this, &MusicPlayer::intisilder);
     connect(m_player, &QMediaPlayer::positionChanged, this, &MusicPlayer::updateSlider);
     connect(ui.musicSlider, &QSlider::sliderReleased, this, &MusicPlayer::rollSlider);
     connect(ui.musicSlider, &QSlider::valueChanged, this, &MusicPlayer::setCurrentTime);
 
 
-    ui.musicFind->setClearButtonEnabled(1);
-    connect(ui.musicFind, &QLineEdit::textChanged, this, &MusicPlayer::findManager);
+    
+    connect(ui.musicFind, &QLineEdit::textChanged, this, &MusicPlayer::findManager);//加载搜索框功能
 }
 
 
