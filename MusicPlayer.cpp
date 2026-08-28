@@ -206,7 +206,7 @@ void MusicPlayer::intiwidget()
 
     //加载音量功能
     intivolumeSlider();
-    connect(ui.volumeSlider, &QSlider::valueChanged, this, &MusicPlayer::volumeSliderManager);////拖拽时更新音量
+    connect(ui.volumeSlider, &QSlider::valueChanged, this, &MusicPlayer::updateVolumeSlider);////拖拽时更新音量
     
     connect(ui.musicFind, &QLineEdit::textChanged, this, &MusicPlayer::findManager);//加载搜索框功能
 
@@ -553,17 +553,31 @@ void MusicPlayer::findManager()
 }
 
 
+void MusicPlayer::sustainDefaultVolume()
+{
+    QSettings sustain("jjh", "AudioSounder64");
+    sustain.setValue("defaultVolume", a_output->volume());
+}
+
+qreal MusicPlayer::getDefaultVolume()
+{
+    QSettings sustain("jjh", "AudioSounder64");
+    QVariant vol = sustain.value("defaultVolume",0.5);
+    return vol.toReal();
+}
+
 void MusicPlayer::intivolumeSlider()
 {
     ui.volumeSlider->setRange(0, 100);
-    ui.volumeSlider->setValue(50);
-    a_output->setVolume(0.5);
+    ui.volumeSlider->setValue(getDefaultVolume()*100);
+    a_output->setVolume(getDefaultVolume());
 
 }
 
-void MusicPlayer::volumeSliderManager()
+void MusicPlayer::updateVolumeSlider()
 {
-    a_output->setVolume((float)ui.volumeSlider->value()/100);
+    a_output->setVolume((qreal)ui.volumeSlider->value()/100);
+    sustainDefaultVolume();
 }
 
 

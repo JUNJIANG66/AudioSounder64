@@ -58,10 +58,14 @@ private:
     void changeMode();//模式切换按钮管理
  
 
-    void findManager();
+    void findManager();//搜索框功能管理
 
-    void intivolumeSlider();
-    void volumeSliderManager();
+   
+    void sustainDefaultVolume();//存储为默认音量
+    qreal getDefaultVolume();//获取默认音量
+    void intivolumeSlider();//初始化音量条
+    void updateVolumeSlider();//音量条更新
+
 
     void intiwidget();//初始化控件
 
