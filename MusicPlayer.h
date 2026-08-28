@@ -30,6 +30,12 @@ private:
     void musicManager(const QString& filepath);//音乐播放按钮管理
     
 
+    void intisilder();//进度条初始化
+    void updateSlider();//更新进度条
+    void rollSlider();//滚动进度条
+    void setCurrentTime();//设置剩余时间
+
+
     QFileInfoList fileInfos;//音乐文件信息列表
     void intimusicList(const QString& filepath);//播放列表初始化
     void musicListManager();//播放列表按钮管理
@@ -52,10 +58,7 @@ private:
     void changeMode();//模式切换按钮管理
  
 
-    void intisilder();//进度条初始化
-    void updateSlider();//更新进度条
-    void rollSlider();//滚动进度条
-    void setCurrentTime();//设置剩余时间
+    void findManager();
 
     void intiwidget();//初始化控件
 
@@ -64,7 +67,7 @@ private:
     void sustainDefaultPath();//存储为默认路径
     QString getDefaultPath();//获取默认路径
 
-    void findManager();
+    
 
     
     

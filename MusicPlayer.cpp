@@ -197,9 +197,9 @@ void MusicPlayer::intiwidget()
         });
     connect(ui.mode, &QPushButton::clicked, this, &MusicPlayer::changeMode);//加载播放模式切换功能
 
-
-    ui.currentTime->setText("00:00");//加载进度条功能
-    connect(m_player, &QMediaPlayer::durationChanged, this, &MusicPlayer::intisilder);
+    //加载进度条功能
+    ui.currentTime->setText("00:00");
+    connect(m_player, &QMediaPlayer::durationChanged, this, &MusicPlayer::intisilder);//切换音乐时更新进度条
     connect(m_player, &QMediaPlayer::positionChanged, this, &MusicPlayer::updateSlider);
     connect(ui.musicSlider, &QSlider::sliderReleased, this, &MusicPlayer::rollSlider);
     connect(ui.musicSlider, &QSlider::valueChanged, this, &MusicPlayer::setCurrentTime);
@@ -285,10 +285,6 @@ void MusicPlayer::intisilder()
     QString sumtime = QTime(0, sum / 1000 / 60, sum / 1000 % 60, 0).toString("mm:ss");
     ui.sumTime->setText(sumtime);
     ui.musicSlider->setRange(0, sum);
-
-
-
-    
 }
 
 void MusicPlayer::updateSlider()
@@ -339,6 +335,8 @@ void MusicPlayer::intimusicList(const QString& filepath)
         musicMaxId = 0;
         currentID = 0;
         currectPath = filepath;
+        m_player->setSource(QUrl());
+        intisilder();
         return;
     }
     else 
@@ -363,6 +361,7 @@ void MusicPlayer::intimusicList(const QString& filepath)
         musicMaxId = ui.musiclist->count()-1;
         currectPath = filepath;
         m_player->setSource(QUrl::fromLocalFile(currentMusic));
+        intisilder();
     }
 
 }
@@ -484,14 +483,15 @@ void MusicPlayer::addFiles()
     currectPath= QFileDialog::getExistingDirectory(this,"请选择音频文件夹","", QFileDialog::ShowDirsOnly);
     if (currectPath.isEmpty())
         return;
+    m_player->stop();
+    m_player->setSource(QUrl());
     intimusicList(currectPath);
     if (!ui.musiclist->isVisible())
     {
         ui.musiclist->show();
         ui.musicFind->show();
     }
-    m_player->stop();
-    m_player->setSource(QUrl());
+   
     setButtonStyle(ui.ifpause, ":/icon/icon/player.png", QSize(60, 60));
     sustainDefaultPath();
 
