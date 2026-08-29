@@ -77,8 +77,7 @@ AudioSounder64/
 ├── CMakeLists.txt
 └── Resource/
     ├── ICON/               # 按钮图标（qrc）/ Button icons (qrc)
-    ├── IMG/                # 背景图（qrc）/ Background image (qrc)
-    └── AUDIO/              # 测试音频（qrc）/ Test audio (qrc)
+    └── IMG/                # 背景图（qrc）/ Background image (qrc)
 ```
 
 ## 路线图 / Roadmap
@@ -90,4 +89,4 @@ AudioSounder64/
 
 ## 许可证 / License
 
-MIT（待补充 LICENSE 文件）/ MIT (LICENSE file to be added)
+[MIT](LICENSE)
