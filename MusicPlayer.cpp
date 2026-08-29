@@ -255,10 +255,14 @@ void MusicPlayer::intiwidget()
 
         });//静音键
     connect(ui.volumeSlider, &QSlider::valueChanged, this, &MusicPlayer::setVolumeTip);//更新音量提示
-
-    connect(ui.musicFind, &QLineEdit::textChanged, this, &MusicPlayer::findManager);//加载搜索框功能
-
-
+    //加载搜索框功能
+    connect(ui.musicFind, &QLineEdit::textChanged, this, &MusicPlayer::findManager);
+    //加载当前音乐名称
+    ui.musicName->setText(fileInfos[0].fileName());
+    connect(m_player, &QMediaPlayer::durationChanged, this,[this]()
+        {
+            ui.musicName->setText(fileInfos[ui.musiclist->currentRow()].fileName());
+        });
 }
 
 
