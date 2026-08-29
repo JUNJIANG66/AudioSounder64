@@ -258,7 +258,7 @@ void MusicPlayer::intiwidget()
     //加载搜索框功能
     connect(ui.musicFind, &QLineEdit::textChanged, this, &MusicPlayer::findManager);
     //加载当前音乐名称
-    ui.musicName->setText(fileInfos.isEmpty() ? "未选择文件夹" : fileInfos[0].fileName());
+    ui.musicName->setText(fileInfos.isEmpty() ? "未选择音频文件夹" : fileInfos[0].fileName());
     connect(m_player, &QMediaPlayer::durationChanged, this,[this]()
         {
             int row = ui.musiclist->currentRow();
@@ -393,6 +393,7 @@ void MusicPlayer::intimusicList(const QString& filepath)
     dir.setFilter(QDir::Files | QDir::NoDotAndDotDot);//设置文件类型筛选
     if (dir.count() == 0)
     {
+        ui.musicName->setText("未选择音频文件夹");
         fileInfos.clear();
         currentMusic = "nothing";
         musicMaxId = 0;
