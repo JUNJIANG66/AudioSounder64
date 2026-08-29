@@ -25,7 +25,6 @@ set(PROJECT_SOURCES
     MusicPlayer.cpp
     Resource/ICON/iconResource.qrc
     Resource/IMG/imgResource.qrc
-     Resource/AUDIO/audioResource.qrc
 )
 
 

@@ -258,10 +258,12 @@ void MusicPlayer::intiwidget()
     //加载搜索框功能
     connect(ui.musicFind, &QLineEdit::textChanged, this, &MusicPlayer::findManager);
     //加载当前音乐名称
-    ui.musicName->setText(fileInfos[0].fileName());
+    ui.musicName->setText(fileInfos.isEmpty() ? "未选择文件夹" : fileInfos[0].fileName());
     connect(m_player, &QMediaPlayer::durationChanged, this,[this]()
         {
-            ui.musicName->setText(fileInfos[ui.musiclist->currentRow()].fileName());
+            int row = ui.musiclist->currentRow();
+            if (row >= 0 && row < fileInfos.count())
+                ui.musicName->setText(fileInfos[row].fileName());
         });
 }
 
@@ -372,8 +374,14 @@ void MusicPlayer::setCurrentTime()
 
 void MusicPlayer::intimusicList(const QString& filepath)
 {
-    
     ui.musiclist->clear();
+    QFileInfo aboutfile(filepath);
+    if (!aboutfile.exists())
+    {
+        QMessageBox::warning(this, "提示", "音频文件夹路径失效");
+        return;
+    }
+    
 
     QDir dir(filepath);//创建文件夹对象
 
