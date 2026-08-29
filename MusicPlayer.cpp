@@ -23,10 +23,11 @@ MusicPlayer::MusicPlayer(QWidget *parent)
 
     setBackground(":/img/img/background.jpg");
 
-    intimenu();
+   
 
     intiwidget();
-  
+
+    intimenu();
     
      
 
@@ -36,12 +37,13 @@ MusicPlayer::MusicPlayer(QWidget *parent)
 MusicPlayer::~MusicPlayer()
 {}
 
-void MusicPlayer::setButtonStyle(QPushButton * btn, const QString & filepath,const QSize& size)
+void MusicPlayer::setButtonStyle(QPushButton * btn, const QString & filepath,const QSize& size, const QString& backgroundColor)
 {
     btn->setFixedSize(size);
     btn->setIcon(QIcon(filepath));
     btn->setIconSize(QSize(btn->width(), btn->height()));
-    btn->setStyleSheet("background-color:transparent");
+    btn->setStyleSheet(backgroundColor);
+    btn->setStyleSheet("border:none;");
 }
 
 void MusicPlayer::intiwidget()
@@ -69,19 +71,23 @@ void MusicPlayer::intiwidget()
             else 
                 clearSign->setVisible(1);
         });
-
+    //设置时间进度样式
     ui.currentTime->setStyleSheet(R"(
                     background-color:black;
                     border-radius:4px;
                     padding:2px 6px;
-                                  )");//设置时间进度样式
+                                  )");
     ui.sumTime->setStyleSheet(R"(
                     background-color:black;
                     border-radius:4px;
                     padding:2px 6px;
                                   )");
-    
+   //初始化音量提示背景
+   
+    ui.volumeTip->setStyleSheet(R"(background-color:black; )");
+
     //初始化按钮
+    
     setButtonStyle(ui.mode, ":/icon/icon/sequence.png", QSize(50, 50));
     setButtonStyle(ui.previous, ":/icon/icon/previous.png", QSize(50, 50));
     setButtonStyle(ui.ifpause, ":/icon/icon/player.png", QSize(60, 60));
@@ -203,10 +209,43 @@ void MusicPlayer::intiwidget()
     connect(m_player, &QMediaPlayer::positionChanged, this, &MusicPlayer::updateSlider);//播放时更新进度条
     connect(ui.musicSlider, &QSlider::sliderReleased, this, &MusicPlayer::rollSlider);//拖拽时更新播放进度
     connect(ui.musicSlider, &QSlider::valueChanged, this, &MusicPlayer::setCurrentTime);//拖拽时更新时间
-
+    
     //加载音量功能
+    
     intivolumeSlider();
     connect(ui.volumeSlider, &QSlider::valueChanged, this, &MusicPlayer::updateVolumeSlider);////拖拽时更新音量
+    connect(ui.volumeIcon, &QPushButton::clicked, this,
+        [this]()
+        {
+            if (!getIfSlience())
+            {
+                dic = a_output->volume();
+                a_output->setVolume(0);
+                sustainIfSlience();
+                setButtonStyle(ui.volumeIcon, ":/icon/icon/slience.png", QSize(20, 20));
+            }
+            else if(dic==0)
+            {
+                if (bot)
+                {
+                    setButtonStyle(ui.volumeIcon, ":/icon/icon/volume.png", QSize(20, 20));
+                    bot = 0;
+                }
+                else
+                {
+                    setButtonStyle(ui.volumeIcon, ":/icon/icon/slience.png", QSize(20, 20));
+                    bot = 1;
+                }
+            }
+            else
+            {
+                a_output->setVolume(dic);
+                setButtonStyle(ui.volumeIcon, ":/icon/icon/volume.png", QSize(20, 20));
+                sustainIfSlience();
+                dic = 0;
+            }
+
+        });
     
     connect(ui.musicFind, &QLineEdit::textChanged, this, &MusicPlayer::findManager);//加载搜索框功能
 
@@ -553,6 +592,33 @@ void MusicPlayer::findManager()
 }
 
 
+void MusicPlayer::ifSetSlienceSign()
+{
+    if (getIfSlience())
+    {
+        setButtonStyle(ui.volumeIcon, ":/icon/icon/slience.png", QSize(20, 20));
+        a_output->setVolume(0);
+
+    }
+    else
+    {
+        setButtonStyle(ui.volumeIcon, ":/icon/icon/volume.png", QSize(20, 20));
+    }
+}
+
+void MusicPlayer::sustainIfSlience()
+{
+    QSettings sustain("jjh", "AudioSounder64");
+    sustain.setValue("ifSlience",a_output->volume()==0);
+}
+
+bool MusicPlayer::getIfSlience()
+{
+    QSettings sustain("jjh", "AudioSounder64");
+    QVariant ifs = sustain.value("ifSlience",false);
+    return ifs.toBool();
+}
+
 void MusicPlayer::sustainDefaultVolume()
 {
     QSettings sustain("jjh", "AudioSounder64");
@@ -571,14 +637,19 @@ void MusicPlayer::intivolumeSlider()
     ui.volumeSlider->setRange(0, 100);
     ui.volumeSlider->setValue(getDefaultVolume()*100);
     a_output->setVolume(getDefaultVolume());
-
+    ifSetSlienceSign();
+    if (getDefaultVolume() == 0)bot = 1;
 }
 
 void MusicPlayer::updateVolumeSlider()
 {
     a_output->setVolume((qreal)ui.volumeSlider->value()/100);
     sustainDefaultVolume();
+    sustainIfSlience();
+    ifSetSlienceSign();
+    if (getDefaultVolume() == 0)bot = 1;
 }
+
 
 
 

@@ -11,5 +11,7 @@
         <file>icon/playlist.png</file>
         <file>icon/find.png</file>
         <file>icon/clear.png</file>
+        <file>icon/slience.png</file>
+        <file>icon/volume.png</file>
     </qresource>
 </RCC>

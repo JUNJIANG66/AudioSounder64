@@ -22,7 +22,7 @@ private:
 
 
 
-    void setButtonStyle(QPushButton* btn, const QString& filepath, const QSize& size);//设置按钮格式
+    void setButtonStyle(QPushButton* btn, const QString& filepath, const QSize& size, const QString& backgroundColor= "background-color:transparent");//设置按钮格式
 
     QMediaPlayer* m_player = nullptr;//媒体
     QAudioOutput* a_output = nullptr;//音频输出
@@ -60,12 +60,17 @@ private:
 
     void findManager();//搜索框功能管理
 
-   
+    bool bot = 1;//记录音量为0时的静音状态
+    qreal dic = 0;//记录静音状态前的音量
+    void sustainIfSlience();//存储是否静音状态
+    bool getIfSlience();//获取是否静音状态
+    void ifSetSlienceSign();//是否设定为静音状态
+
     void sustainDefaultVolume();//存储为默认音量
     qreal getDefaultVolume();//获取默认音量
     void intivolumeSlider();//初始化音量条
     void updateVolumeSlider();//音量条更新
-
+ 
 
     void intiwidget();//初始化控件
 
