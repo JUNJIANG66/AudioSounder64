@@ -6,12 +6,7 @@ A lightweight local folder-based music player built with Qt 6 — pick a folder,
 
 ## 界面预览 / Preview
 
-<!-- 建议在此处放置一张程序截图（主界面 + 展开的播放列表与搜索框），例如：
-     ![](assets/screenshot.png) -->
-
-| 主界面 / Main UI | 播放列表与搜索 / Playlist & Search |
-| ---------------- | --------------------------------- |
-| 截图待补充 / TBD | 截图待补充 / TBD |
+![主界面 / Main UI](asset/screenshot.png)
 
 ## 功能特性 / Features
 
