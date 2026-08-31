@@ -20,6 +20,8 @@ A lightweight local folder-based music player built with Qt 6 — pick a folder,
 | 音量条 + 一键静音，音量与静音状态自动记忆 | Volume slider + one-click mute, volume & mute state persisted |
 | 记住上次打开的文件夹，启动即恢复 | Remembers the last opened folder across restarts |
 | 支持 mp3 / wav / flac / aac / m4a / ogg / wma | Supports mp3 / wav / flac / aac / m4a / ogg / wma |
+| 右键音频文件"打开方式"或拖拽到 exe 图标直接播放，自动加载所在文件夹并定位该曲 | Open audio files via right-click "Open with" or dragging them onto the exe icon, auto-loads the folder and jumps to that track |
+| 自动注册 7 种音频格式的"打开方式"关联（不改变双击默认程序） | Auto-registers "Open with" association for 7 audio formats (double-click default untouched) |
 
 ## 构建 / Build
 
@@ -51,16 +53,18 @@ windeployqt build/AudioSounder64.exe
 ## 使用说明 / Usage
 
 1. 菜单栏 **载入音频 → 添加文件夹**，选择一个存放音乐的文件夹；
-2. 点击右侧列表按钮展开歌单，可在顶部搜索框实时过滤曲目；
-3. 底部控制区可切换播放模式、拖动进度条、调节音量或一键静音；
-4. 关闭程序后，文件夹、音量、静音状态都会自动保存。
+2. 也可以右键音频文件 → **打开方式** 选择本程序，或直接把音频文件拖到 exe 图标上——自动加载所在文件夹并定位播放该曲；
+3. 点击右侧列表按钮展开歌单，可在顶部搜索框实时过滤曲目；
+4. 底部控制区可切换播放模式、拖动进度条、调节音量或一键静音；
+5. 关闭程序后，文件夹、音量、静音状态都会自动保存。
 
 ---
 
 1. Menu bar **Load Audio → Add Folder**, pick a folder containing music;
-2. Click the list button on the right to open the playlist; filter tracks live with the search box on top;
-3. Use the bottom control bar to switch play modes, seek, adjust volume, or mute;
-4. Folder path, volume and mute state are saved automatically when the app closes.
+2. Alternatively, right-click an audio file → **Open with** this app, or drag it onto the exe icon — the app loads its folder and plays that track;
+3. Click the list button on the right to open the playlist; filter tracks live with the search box on top;
+4. Use the bottom control bar to switch play modes, seek, adjust volume, or mute;
+5. Folder path, volume and mute state are saved automatically when the app closes.
 
 ## 项目结构 / Project Structure
 
