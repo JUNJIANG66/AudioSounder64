@@ -13,6 +13,7 @@
 #include <QSettings>
 #include<QAction>
 #include<QLineEdit>
+#include<QApplication>
 MusicPlayer::MusicPlayer(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -28,6 +29,8 @@ MusicPlayer::MusicPlayer(QWidget *parent)
     intiwidget();
 
     intimenu();
+    
+    registerFileAssociation();
     
      
 
@@ -93,11 +96,42 @@ void MusicPlayer::intiwidget()
     setButtonStyle(ui.ifpause, ":/icon/icon/player.png", QSize(60, 60));
     setButtonStyle(ui.next, ":/icon/icon/next.png", QSize(50, 50));
     setButtonStyle(ui.playlist, ":/icon/icon/playlist.png", QSize(50, 50));
+
+
+
+
+    connect(ui.musiclist, &QListWidget::itemClicked, this, &MusicPlayer::clickListItem);//加载列表选项播放功能
+    connect(ui.musiclist, &QListWidget::itemClicked, this, [&]()
+        {
+            musicManager(currentMusic);
+
+        });
+
     //初始化控件功能
     intimedia();//初始化媒体
-    intimusicList(getDefaultPath());//列表内容初始化
-    
 
+    QStringList arg = QApplication::arguments();//列表内容初始化
+    if (arg.size() >= 2)//音频文件以此应用打开的情况
+    {
+
+        QFileInfo op(arg.at(1));
+        if (op.isFile() && audioSuffix.contains(op.suffix()))
+        {
+            intimusicList(op.absolutePath());
+            sustainDefaultPath();//存储默认文件夹路径
+
+            ui.musiclist->setCurrentRow(fileInfos.indexOf(op));//选中打开的音频
+            emit ui.musiclist->itemClicked(ui.musiclist->currentItem());//模拟点击信号
+        }
+        else
+        {
+            intimusicList(getDefaultPath());
+        }
+    }
+    else//直接打开应用的情况
+    {
+        intimusicList(getDefaultPath());
+    }
     connect(ui.ifpause, &QPushButton::clicked, this, [&]() 
         {
             musicManager(currentMusic);
@@ -106,16 +140,11 @@ void MusicPlayer::intiwidget()
 
     ui.musiclist->hide();
     ui.musicFind->hide();
+  
     connect(ui.playlist, &QPushButton::clicked, this, [&]()
         {
             musicListManager();
         });//加载显示列表按钮功能
-    connect(ui.musiclist, &QListWidget::itemClicked, this, &MusicPlayer::clickListItem);//加载列表选项播放功能
-    connect(ui.musiclist, &QListWidget::itemClicked, this, [&]()
-        {
-            musicManager(currentMusic);
-
-        });
     connect(ui.previous, &QPushButton::clicked, this, [&]()
         {
             switch (currentMode)
@@ -542,6 +571,28 @@ void MusicPlayer::intimenu()
     connect(ui.addMusicFiles, &QAction::triggered, this, &MusicPlayer::addFiles);
 }
 
+void MusicPlayer::registerFileAssociation()
+{
+    QSettings assoc("HKEY_CURRENT_USER\\Software\\Classes", QSettings::NativeFormat);
+    QString app = QDir::toNativeSeparators(QCoreApplication::applicationFilePath());
+    QString exeName = QFileInfo(app).fileName();
+    const QStringList exts = { "mp3","wav","flac","aac","m4a","ogg","wma" };
+
+
+    for (const QString& e : exts)//设置目标文件类型
+        assoc.setValue("." + e + "/OpenWithProgids/AudioSounder64.Audio", "");
+
+    assoc.setValue("AudioSounder64.Audio/Default", "AudioSounder64");//文件类型
+    assoc.setValue("Applications/" + exeName + "/FriendlyAppName", "AudioSounder64 音频播放器");//打开方式菜单实际显示的名字
+    assoc.setValue("AudioSounder64.Audio/DefaultIcon/Default", app);//关联文件显示exe图标
+
+    assoc.setValue("AudioSounder64.Audio/shell/open/command/Default",//用获得的音频文件路径打开exe
+                   "\"" + app + "\" \"%1\"");
+
+
+    
+}
+
 void MusicPlayer::addFiles()
 {
     currectPath= QFileDialog::getExistingDirectory(this,"请选择音频文件夹","", QFileDialog::ShowDirsOnly);
@@ -613,7 +664,6 @@ void MusicPlayer::findManager()
 
 }
 
-
 void MusicPlayer::ifSetSlienceSign()
 {
     if (getIfSlience())
@@ -677,9 +727,6 @@ void MusicPlayer::setVolumeTip()
 {
     ui.volumeTip->setText(QString::number(getDefaultVolume() * 100,'f',0));
 }
-
-
-
 
 
 

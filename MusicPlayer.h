@@ -6,6 +6,8 @@
 #include <QAudioOutput.h>
 #include <QFileInfo>
 #include <QListWidgetItem>  
+#include <QSet>
+
 class MusicPlayer : public QMainWindow
 {
     Q_OBJECT
@@ -72,14 +74,25 @@ private:
     void updateVolumeSlider();//音量条更新
     void setVolumeTip();//设置音量提示
  
+  
+    QSet<QString> audioSuffix = { "mp3","wav","flac","ogg","m4a","aac","wma" };//支持格式
 
     void intiwidget();//初始化控件
+
+
+
 
     void intimenu();//初始化菜单
     void addFiles();//添加文件夹
     void sustainDefaultPath();//存储为默认路径
     QString getDefaultPath();//获取默认路径
 
+
+
+    void registerFileAssociation();//注册"打开方式"文件关联
+
+
+    
     
 
     
