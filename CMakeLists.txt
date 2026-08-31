@@ -25,6 +25,7 @@ set(PROJECT_SOURCES
     MusicPlayer.cpp
     Resource/ICON/iconResource.qrc
     Resource/IMG/imgResource.qrc
+    Resource/ICON/app.rc
 )
 
 
@@ -32,7 +33,7 @@ qt_add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
 
 set_target_properties(${PROJECT_NAME}
     PROPERTIES
-        WIN32_EXECUTABLE FALSE
+        WIN32_EXECUTABLE TRUE
 )
 
 target_link_libraries(${PROJECT_NAME}
